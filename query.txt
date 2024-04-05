@@ -1,0 +1,6 @@
+Name: Priyansh
+Email: mrpriyanshuniverse@gmail.com
+Age: 19
+Gender: male
+Symptoms: Test
+Self Diagnosis Details: Test
