@@ -11,9 +11,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const selfDiagnosis = formData.get('selfDiagnosis');
 
     // Process the form data into a chat GPT prompt
-    const prompt = `Name: ${name}\nEmail: ${email}\nAge: ${age}\nGender: ${gender}\nSymptoms: ${symptoms}\nSelf Diagnosis Details: ${selfDiagnosis}`;
-
+    const prompt = `Imagine you are an expert doctor and here is your patient details:\nName: ${name}\nAge: ${age}\nGender: ${gender}\nSymptoms: ${symptoms}\n Diagnose this patient with minimum of 1000 words/points with output in ${langCode[language]} format with inline CSS`;  
     // Log the prompt to the console for now
     console.log(prompt);
+  });  
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('diagnosisForm');
+  const diagnosisOutput = document.getElementById('diagnosisOutput');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const symptoms = formData.get('symptoms');
+
+    fetch('/diagnose', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ symptoms })
+    })
+    .then(response => response.json())
+    .then(data => {
+      diagnosisOutput.innerHTML = `<h3>Diagnosis:</h3><p>${data.diagnosis}</p>`;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("An error occurred while processing your request.");
+    });
   });
 });
