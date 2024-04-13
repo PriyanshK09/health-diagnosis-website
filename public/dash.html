@@ -8,7 +8,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-    body {
+   body {
         font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
@@ -19,8 +19,8 @@
         background-repeat: no-repeat;
         color: #333;
         line-height: 1.6;
+        background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
     }
-
     .header {
         background-color: #333;
         color: #fff;
@@ -78,7 +78,7 @@
     /* Typing animation for the welcome message */
     @keyframes typing {
         from { width: 0 }
-        to { width: 23%}
+        to { width:50%}
     }
 
     .typing-effect {
@@ -86,8 +86,8 @@
         border-right: 2px solid #333;
         white-space: nowrap;
         margin: 0 auto;
-        font-size: 1.5rem;
-        animation: typing 2.5s steps(30, end) infinite;
+        font-size: 3rem;
+        animation: typing 3.5s steps(30, end) infinite;
         width: fit-content;
     }
 </style>
@@ -119,17 +119,14 @@
             </ul>
           </li>
         </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success text-light" type="submit">Search</button>
-        </form>
+        <h3 class="text-light">Medi<span class="text-warning">Care</span></h3>&nbsp;&nbsp;<p class="text-light" style="font-size: 12px;">powered by <span class="text-warning">AI</span></p>
       </div>
     </div>
   </nav>
 <div class="container">
     <img src="/Assets/log.png" alt="Hero Image" width="150" height="150">
-    <div class="typing-effect" id="typingEffect">Welcome to MediCare</div>
-    <p>Get started with diagnosing your health condition now.</p>
+    <div class="typing-effect text-light" id="typingEffect">Welcome to MediCare</div>
+    <p class="text">Get started with diagnosing your health condition now.</p>
     <button onclick="window.location.href='/auth.html'">Diagnose Now</button>
 </div>
 <div class="footer">
@@ -140,7 +137,16 @@
 const messages = [
   "Welcome to MediCare",
   "मेडिकेयर में आपका स्वागत है",
-  "Bienvenido a MediCare"
+  "Bienvenido a MediCare",
+  "Bienvenue chez MediCare", // French
+  "Willkommen bei MediCare", // German
+  "Benvenuti in MediCare", // Italian
+  "ようこそメディケアへ", // Japanese
+  "환영합니다 메디케어에", // Korean
+  "Bem-vindo ao MediCare", // Portuguese
+  "Добро пожаловать в Медикер", // Russian
+  "Bienvenido a MediCare", // Spanish
+  "Hoş geldiniz MediCare'e" // Turkish
 ];
 function alternateMessages() {
   let index = 0;
