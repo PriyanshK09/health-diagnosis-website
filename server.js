@@ -181,10 +181,30 @@ app.get("/", (req, res) => {
 
 // Diagnosis route
 app.post("/diagnose", async (req, res) => {
-    const { name, age, gender, symptoms, language } = req.body;
+    const { name, age, gender, symptoms, country, language } = req.body;
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const prompt = `Imagine you are an expert doctor and here is your patient details:\nName: ${name}\nAge: ${age}\nGender: ${gender}\nSymptoms: ${symptoms}\n Diagnose this patient in ${language} language with minimum of 1000 words/points with output in HTML format with inline CSS (Patient details are in a row table format (Plain Table not much styling)); Also remember if symptoms are not correct or seems misguiding such as off-topic, give out Re-write your symptoms correctly as output in HTML.`;
+    const prompt = `
+    Imagine you are a medical professional tasked with diagnosing a patient. Here are the patient's details:
+    Name: ${name}
+    Age: ${age}
+    Gender: ${gender}
+    Symptoms: ${symptoms}
+
+    Make sure all diagnosis and recommendation must be relevant to patient's country of residence i.e. : ${country}
+    Your task is to provide a detailed diagnosis and treatment plan in HTML format. The diagnosis should include all relevant details, discussions, and recommendations. The output should be in ${language} language, structured as follows:
+    1. Start with an HTML document structure.
+    2. Include a heading with the patient's name and a brief introduction.
+    3. Create a table with the patient's details (name, age, gender, symptoms).
+    4. Provide a detailed diagnosis including possible conditions, explanations, and reasoning.
+    5. Outline a treatment plan with specific recommendations. Every text must be written like a professional doctor and you must write in descriptive manner all total diagnosis should be a minimum of 3000 words.
+    6. Use proper HTML elements and formatting also remember that all headings must be distinguishable (e.g., headings, paragraphs, tables).
+    7. Ensure the document is well-organized, easy to read, and professional-looking. At last also write a list of medicines that could help and why, with all possible treatment that can be done according to a professional and experienced doctor.
+    
+    Your final output should be an HTML file with inline CSS for styling, presenting the diagnosis report as if it were from a real doctor.
+    IF a symptom is not a recognized medical condition or seems misguiding such as off-topic just give error dont give any output or any heading of diagnosis and just give a Well Formatted (Error code in RED, BOLD, CENTER; then error message with all details) error message in HTML with Error Code : Re-write your Symptoms correctly as they are either wrong or mis-guiding for doctors to process it.
+    `;
+    // const prompt = `Imagine you are an expert doctor and here is your patient details:\nName: ${name}\nAge: ${age}\nGender: ${gender}\nSymptoms: ${symptoms}\n Diagnose this patient in ${language} language with minimum of 1000 words/points with output in HTML format with inline CSS (Patient details are in a row table format (Plain Table not much styling)); Also remember if symptoms are not correct or seems misguiding such as off-topic, give out Re-write your symptoms correctly as output in HTML in tabular form start and proper formatted headings.`;
     console.log(prompt);
     const result = await model.generateContent(prompt);
     const response = await result.response;
