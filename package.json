@@ -16,6 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
+    "nodemailer": "^6.9.13",
     "path": "^0.12.7"
   }
 }

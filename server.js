@@ -85,11 +85,12 @@
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
+const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-const bcrypt = require('bcrypt');
 const app = express();
 const path = require("path");
+const req = require("express/lib/request");
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -99,6 +100,34 @@ app.use(express.static(path.join(__dirname, 'public'))); // Serve static files f
 
 // Access your API key as an environment variable
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+
+// Nodemailer configuration
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Example: 'gmail'
+    auth: {
+        user: 'priyanshkhare0908@gmail.com',
+        pass: 'ljgy gxio lzvc fkoe '
+    }
+});
+
+// Send Email function
+function sendEmail(receiverName, receiverEmail, diagnosisHTML) {
+    const mailOptions = {
+        from:'priyanshkhare0908@gmail.com' ,
+        to: receiverEmail ,
+        subject: 'Diagnosis-Report for ' + receiverName,
+        html: diagnosisHTML
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Email sent:', info.response);
+        }
+    });
+}
 
 // Authentication routes
 // Helper function to read and parse the users.txt file
@@ -181,7 +210,7 @@ app.get("/", (req, res) => {
 
 // Diagnosis route
 app.post("/diagnose", async (req, res) => {
-    const { name, age, gender, symptoms, country, language } = req.body;
+    const { name, age, gender, symptoms, country, language, email } = req.body;
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
@@ -222,6 +251,7 @@ app.post("/diagnose", async (req, res) => {
             `);
 
             res.send(updatedHTML);
+            sendEmail(name, email, diagnosis);
         }
     });
 });
