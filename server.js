@@ -87,6 +87,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const express = require("express");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
+const dotEnv = require('dotenv').config()
 const fs = require("fs");
 const app = express();
 const path = require("path");
@@ -95,8 +96,7 @@ const PORT = process.env.PORT || 3000;
 
 // MongoDB for Authentication (Update 4.0)
 const { MongoClient } = require('mongodb');
-const uri = MongoURI;
-const client = new MongoClient(uri);
+const client = new MongoClient(process.env.MongoURI);
 
 // Connect to the MongoDB cluster
 client.connect().then(() => {
@@ -159,7 +159,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail', // Example: 'gmail'
     auth: {
         user: 'priyanshkhare0908@gmail.com',
-        pass: PSWD
+        pass: process.env.PSWD
     }
 });
 
