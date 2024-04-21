@@ -95,7 +95,7 @@ const PORT = process.env.PORT || 3000;
 
 // MongoDB for Authentication (Update 4.0)
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://priyansh:7007@medicareai.t5x1jvx.mongodb.net/?retryWrites=true&w=majority&appName=MedicareAI';
+const uri = MongoURI;
 const client = new MongoClient(uri);
 
 // Connect to the MongoDB cluster
