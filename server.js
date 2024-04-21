@@ -93,6 +93,58 @@ const path = require("path");
 const req = require("express/lib/request");
 const PORT = process.env.PORT || 3000;
 
+// MongoDB for Authentication (Update 4.0)
+const { MongoClient } = require('mongodb');
+const uri = 'mongodb+srv://priyansh:7007@medicareai.t5x1jvx.mongodb.net/?retryWrites=true&w=majority&appName=MedicareAI';
+const client = new MongoClient(uri);
+
+// Connect to the MongoDB cluster
+client.connect().then(() => {
+    console.log('Connected to MongoDB Atlas');
+
+    // Signup route
+    app.post("/signup", async (req, res) => {
+        const { username, email, password } = req.body;
+
+        try {
+            // Check if user already exists
+            const existingUser = await client.db('medicareai').collection('users').findOne({ email });
+            if (existingUser) {
+                return res.status(400).send('User with this email already exists');
+            }
+
+            // Insert new user into the database
+            await client.db('medicareai').collection('users').insertOne({ username, email, password });
+            res.status(201).send('User signed up successfully');
+        } catch (err) {
+            console.error('Error signing up user', err);
+            res.status(500).send('Internal server error');
+        }
+    });
+
+    // Login route
+    app.post("/login", async (req, res) => {
+        const { username, password } = req.body;
+
+        try {
+            // Find user in the database
+            const user = await client.db('medicareai').collection('users').findOne({ username, password });
+            if (user) {
+                // Authentication successful
+                res.redirect('/sdiagnose.html');
+            } else {
+                res.status(401).send('Invalid username or password');
+            }
+        } catch (err) {
+            console.error('Error logging in user', err);
+            res.status(500).send('Internal server error');
+        }
+    });
+}).catch(err => {
+    console.error('Error connecting to MongoDB Atlas', err);
+    process.exit(1); // Exit the application if unable to connect to MongoDB
+});
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -146,61 +198,62 @@ function writeUsersFile(users) {
     fs.writeFileSync('users.txt', JSON.stringify(users, null, 4));
 }
 
-// Signup route
-app.post("/signup", (req, res) => {
-    const { username, email, password } = req.body;
+// Old CSV Method (Since Update 2.0)
+// // Signup route
+// app.post("/signup", (req, res) => {
+//     const { username, email, password } = req.body;
 
-    // Read existing user data from CSV
-    fs.readFile('users.csv', 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading file:', err);
-            res.status(500).send('Internal server error');
-        } else {
-            let users = data ? data.split('\n').map(line => line.split(',')) : [];
-            // Check if user already exists
-            if (users.some(user => user[1] === email)) {
-                res.status(400).send('User with this email already exists');
-            } else {
-                // Append new user to the CSV file
-                users.push([username, email, password]);
-                console.log('New user data:', [username, email, password]); // Print the new user data
-                const newUserRow = users.map(user => user.join(',')).join('\n');
-                fs.writeFile('users.csv', newUserRow, (err) => {
-                    if (err) {
-                        console.error('Error writing to file:', err);
-                        res.status(500).send('Internal server error');
-                    } else {
-                        res.status(201).send('User signed up successfully');
-                    }
-                });
-            }
-        }
-    });
-});
+//     // Read existing user data from CSV
+//     fs.readFile('users.csv', 'utf8', (err, data) => {
+//         if (err) {
+//             console.error('Error reading file:', err);
+//             res.status(500).send('Internal server error');
+//         } else {
+//             let users = data ? data.split('\n').map(line => line.split(',')) : [];
+//             // Check if user already exists
+//             if (users.some(user => user[1] === email)) {
+//                 res.status(400).send('User with this email already exists');
+//             } else {
+//                 // Append new user to the CSV file
+//                 users.push([username, email, password]);
+//                 console.log('New user data:', [username, email, password]); // Print the new user data
+//                 const newUserRow = users.map(user => user.join(',')).join('\n');
+//                 fs.writeFile('users.csv', newUserRow, (err) => {
+//                     if (err) {
+//                         console.error('Error writing to file:', err);
+//                         res.status(500).send('Internal server error');
+//                     } else {
+//                         res.status(201).send('User signed up successfully');
+//                     }
+//                 });
+//             }
+//         }
+//     });
+// });
 
 
-// Login route
-app.post("/login", (req, res) => {
-    const { username, password } = req.body;
+// // Login route
+// app.post("/login", (req, res) => {
+//     const { username, password } = req.body;
 
-    // Read user data from CSV
-    fs.readFile('users.csv', 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading file:', err);
-            res.status(500).send('Internal server error');
-        } else {
-            const users = data ? data.split('\n').map(line => line.split(',')) : [];
-            // Check if username exists and password is correct
-            const user = users.find(user => user[0] === username && user[2] === password);
-            if (user) {
-                // Authentication successful
-                res.redirect('/sdiagnose.html');
-            } else {
-                res.status(401).send('Invalid username or password');
-            }
-        }
-    });
-});
+//     // Read user data from CSV
+//     fs.readFile('users.csv', 'utf8', (err, data) => {
+//         if (err) {
+//             console.error('Error reading file:', err);
+//             res.status(500).send('Internal server error');
+//         } else {
+//             const users = data ? data.split('\n').map(line => line.split(',')) : [];
+//             // Check if username exists and password is correct
+//             const user = users.find(user => user[0] === username && user[2] === password);
+//             if (user) {
+//                 // Authentication successful
+//                 res.redirect('/sdiagnose.html');
+//             } else {
+//                 res.status(401).send('Invalid username or password');
+//             }
+//         }
+//     });
+// });
 
 
 // Serve dashboard on default URL
