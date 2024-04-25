@@ -181,22 +181,21 @@ function sendEmail(receiverName, receiverEmail, diagnosisHTML) {
     });
 }
 
-// Authentication routes
-// Helper function to read and parse the users.txt file
-function readUsersFile() {
-    try {
-        const usersData = fs.readFileSync('users.txt', 'utf8');
-        return JSON.parse(usersData);
-    } catch (err) {
-        // If the file doesn't exist or is empty, return an empty array
-        return [];
-    }
-}
+// // Helper function to read and parse the users.txt file
+// function readUsersFile() {
+//     try {
+//         const usersData = fs.readFileSync('users.txt', 'utf8');
+//         return JSON.parse(usersData);
+//     } catch (err) {
+//         // If the file doesn't exist or is empty, return an empty array
+//         return [];
+//     }
+// }
 
-// Helper function to write to the users.txt file
-function writeUsersFile(users) {
-    fs.writeFileSync('users.txt', JSON.stringify(users, null, 4));
-}
+// // Helper function to write to the users.txt file
+// function writeUsersFile(users) {
+//     fs.writeFileSync('users.txt', JSON.stringify(users, null, 4));
+// }
 
 // Old CSV Method (Since Update 2.0)
 // // Signup route
